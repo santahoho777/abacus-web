@@ -18,16 +18,5 @@ export default async function PracticePage({
   } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const { data } = await supabase
-    .from('tree_progress')
-    .select('total_correct')
-    .eq('user_id', user.id)
-    .single()
-
-  return (
-    <PracticeClient
-      lessonId={lessonId}
-      initialTotalCorrect={data?.total_correct ?? 0}
-    />
-  )
+  return <PracticeClient lessonId={lessonId} />
 }

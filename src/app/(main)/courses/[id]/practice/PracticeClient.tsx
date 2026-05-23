@@ -7,22 +7,15 @@ import { ACHIEVEMENTS } from '@/lib/achievements'
 import { getLessonById } from '@/lib/lessons'
 import VirtualNumpad from '@/components/VirtualNumpad'
 import AchievementToast from '@/components/AchievementToast'
-import GrowingTree from '@/components/GrowingTree'
 import { submitAnswer } from '@/app/practice/actions'
+import { useTree } from '@/contexts/TreeContext'
 import { AchievementDef } from '@/types/gamification'
 import { CheckCircle2, XCircle, Lightbulb, ArrowLeft, Trophy } from 'lucide-react'
 
-interface PracticeClientProps {
-  lessonId: number
-  initialTotalCorrect: number
-}
-
-export default function PracticeClient({
-  lessonId,
-  initialTotalCorrect,
-}: PracticeClientProps) {
+export default function PracticeClient({ lessonId }: { lessonId: number }) {
   const lesson = getLessonById(lessonId)
   const questions = getQuestionsForLesson(lessonId)
+  const { water } = useTree()
 
   const [currentIndex, setCurrentIndex] = useState(0)
   const [inputValue, setInputValue] = useState('')
@@ -32,8 +25,6 @@ export default function PracticeClient({
   const [toastAchievement, setToastAchievement] = useState<AchievementDef | null>(null)
   const [finished, setFinished] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [totalCorrect, setTotalCorrect] = useState(initialTotalCorrect)
-  const [isWatering, setIsWatering] = useState(false)
 
   const currentQ = questions[currentIndex]
 
@@ -61,18 +52,14 @@ export default function PracticeClient({
 
     if (isCorrect) {
       setScore((s) => s + 1)
-      setTotalCorrect(result.totalCorrect)
-      setIsWatering(true)
+      water(result.totalCorrect)
       if (result.newBadgeIds.length > 0) {
         const def = ACHIEVEMENTS.find((a) => a.id === result.newBadgeIds[0])
         if (def) setToastAchievement(def)
       }
-      setTimeout(() => {
-        setIsWatering(false)
-        advanceQuestion()
-      }, 1500)
+      setTimeout(advanceQuestion, 1500)
     }
-  }, [currentQ, inputValue, isSubmitting, feedback, lessonId, advanceQuestion])
+  }, [currentQ, inputValue, isSubmitting, feedback, lessonId, advanceQuestion, water])
 
   if (!lesson) {
     return <div className="p-8 text-center text-slate-500">課程不存在</div>
@@ -115,7 +102,7 @@ export default function PracticeClient({
       />
 
       {/* Header */}
-      <div className="flex items-center gap-3 mb-4">
+      <div className="flex items-center gap-3 mb-6">
         <Link
           href={`/courses/${lessonId}`}
           className="text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
@@ -144,22 +131,13 @@ export default function PracticeClient({
         </span>
       </div>
 
-      {/* Mini tree */}
-      <div className="mb-4">
-        <GrowingTree
-          totalCorrect={totalCorrect}
-          compact
-          isWatering={isWatering}
-        />
-      </div>
-
       {/* Question card */}
       <div
         className={`rounded-2xl p-8 mb-6 text-center transition-all duration-300 ${
           feedback === 'correct'
             ? 'bg-emerald-50 border-2 border-emerald-300'
             : feedback === 'wrong'
-            ? 'bg-red-50 border-2 border-red-300'
+            ? 'bg-orange-50 border-2 border-orange-300'
             : 'bg-white border-2 border-slate-200 shadow-sm'
         }`}
       >
@@ -170,9 +148,9 @@ export default function PracticeClient({
           </div>
         )}
         {feedback === 'wrong' && (
-          <div className="flex items-center justify-center gap-2 text-red-600 mb-3">
+          <div className="flex items-center justify-center gap-2 text-orange-600 mb-3">
             <XCircle className="w-6 h-6" />
-            <span className="font-bold text-lg">正確答案是 {currentQ.answer}</span>
+            <span className="font-bold text-lg">再想想看！</span>
           </div>
         )}
 
@@ -187,7 +165,7 @@ export default function PracticeClient({
           </span>
         </div>
 
-        {/* Hint — before answer submitted */}
+        {/* Hint before submission */}
         {currentQ.hint && !feedback && (
           <div className="mt-2">
             {showHint ? (
@@ -208,7 +186,7 @@ export default function PracticeClient({
           </div>
         )}
 
-        {/* Hint — shown immediately when wrong */}
+        {/* Hint shown immediately when wrong */}
         {feedback === 'wrong' && currentQ.hint && (
           <div className="mt-3 flex items-center justify-center gap-2 text-amber-600 text-sm bg-amber-50 rounded-xl px-4 py-2">
             <Lightbulb className="w-4 h-4 flex-shrink-0" />

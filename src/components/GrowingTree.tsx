@@ -141,6 +141,13 @@ export default function GrowingTree({
       <div
         className={`relative mx-auto w-48 h-48 rounded-3xl bg-gradient-to-b ${visual.bg} border-2 border-white shadow-lg flex items-center justify-center mb-4 overflow-hidden`}
       >
+        {isWatering && (
+          <div className="absolute inset-0 z-10 pointer-events-none flex justify-around items-start pt-2 px-6">
+            <span className="animate-bounce text-lg">💧</span>
+            <span className="animate-bounce text-sm" style={{ animationDelay: '0.15s' }}>💧</span>
+            <span className="animate-bounce text-lg" style={{ animationDelay: '0.3s' }}>💧</span>
+          </div>
+        )}
         <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-amber-100 to-transparent" />
         <svg
           viewBox="0 0 120 100"

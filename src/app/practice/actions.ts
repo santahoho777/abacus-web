@@ -82,7 +82,7 @@ export async function submitAnswer(
     )
   }
 
-  revalidatePath('/garden')
+  revalidatePath('/', 'layout')
   revalidatePath('/dashboard')
 
   return { correct: true, newBadgeIds, totalCorrect: newTotal }
