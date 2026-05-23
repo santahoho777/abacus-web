@@ -48,6 +48,7 @@ export default function PracticeClient({ lessonId }: { lessonId: number }) {
     if (!isCorrect) setShowHint(true)
 
     const result = await submitAnswer(lessonId, currentQ.id, isCorrect)
+    setIsSubmitting(false)
 
     if (isCorrect) {
       setScore((s) => s + 1)
@@ -62,7 +63,6 @@ export default function PracticeClient({ lessonId }: { lessonId: number }) {
       setTimeout(() => {
         setFeedback(null)
         setInputValue('')
-        setIsSubmitting(false)
       }, 800)
     }
   }, [currentQ, inputValue, isSubmitting, feedback, lessonId, advanceQuestion, water])
