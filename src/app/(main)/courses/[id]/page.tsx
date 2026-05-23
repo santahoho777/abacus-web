@@ -117,6 +117,16 @@ export default async function LessonPage({
         </div>
       )}
 
+      {/* Practice link */}
+      <div className="mt-6 text-center">
+        <Link
+          href={`/courses/${lessonId}/practice`}
+          className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-6 py-3 rounded-xl transition-colors"
+        >
+          ✏️ 開始練習
+        </Link>
+      </div>
+
       {/* Mark complete / login prompt */}
       <div className="mt-8 p-5 bg-white border border-slate-200 rounded-xl">
         {user ? (

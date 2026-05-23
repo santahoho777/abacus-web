@@ -28,6 +28,12 @@ export default async function Header() {
           >
             課程列表
           </Link>
+          <Link
+            href="/garden"
+            className="text-sm text-slate-600 hover:text-indigo-600 transition-colors font-medium"
+          >
+            我的花園
+          </Link>
 
           {user ? (
             <>
