@@ -196,7 +196,7 @@ export default function GrowingTree({
             <div
               key={s.stage}
               title={s.label}
-              className={`w-7 h-7 rounded-full flex items-center justify-center text-sm transition-all duration-300 ${
+              className={`w-6 h-6 rounded-full flex items-center justify-center text-xs transition-all duration-300 ${
                 reached
                   ? 'bg-emerald-100 border-2 border-emerald-400 shadow-sm'
                   : 'bg-slate-100 border-2 border-slate-200 opacity-40'

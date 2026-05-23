@@ -48,7 +48,6 @@ export default function PracticeClient({ lessonId }: { lessonId: number }) {
     if (!isCorrect) setShowHint(true)
 
     const result = await submitAnswer(lessonId, currentQ.id, isCorrect)
-    setIsSubmitting(false)
 
     if (isCorrect) {
       setScore((s) => s + 1)
@@ -58,6 +57,13 @@ export default function PracticeClient({ lessonId }: { lessonId: number }) {
         if (def) setToastAchievement(def)
       }
       setTimeout(advanceQuestion, 1500)
+    } else {
+      setShowHint(true)
+      setTimeout(() => {
+        setFeedback(null)
+        setInputValue('')
+        setIsSubmitting(false)
+      }, 800)
     }
   }, [currentQ, inputValue, isSubmitting, feedback, lessonId, advanceQuestion, water])
 
@@ -192,17 +198,6 @@ export default function PracticeClient({ lessonId }: { lessonId: number }) {
             <Lightbulb className="w-4 h-4 flex-shrink-0" />
             {currentQ.hint}
           </div>
-        )}
-
-        {/* Continue button after wrong answer */}
-        {feedback === 'wrong' && !isSubmitting && (
-          <button
-            type="button"
-            onClick={advanceQuestion}
-            className="mt-4 bg-slate-700 hover:bg-slate-800 text-white font-medium px-6 py-2.5 rounded-xl transition-colors cursor-pointer"
-          >
-            {currentIndex + 1 >= questions.length ? '完成練習' : '繼續下一題 →'}
-          </button>
         )}
       </div>
 
