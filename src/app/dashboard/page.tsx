@@ -2,8 +2,11 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { LESSONS } from '@/lib/lessons'
+import { ACHIEVEMENTS } from '@/lib/achievements'
 import LessonCard from '@/components/LessonCard'
 import ProgressBar from '@/components/ProgressBar'
+import GrowingTree from '@/components/GrowingTree'
+import AchievementBadge from '@/components/AchievementBadge'
 import { User, Trophy, Flame } from 'lucide-react'
 
 export const metadata = { title: '我的學習進度' }
@@ -16,13 +19,22 @@ export default async function DashboardPage() {
 
   if (!user) redirect('/login')
 
-  const [profileResult, progressResult] = await Promise.all([
+  const [profileResult, progressResult, treeResult, badgeResult] = await Promise.all([
     supabase.from('profiles').select('name').eq('id', user.id).single(),
     supabase
       .from('lesson_progress')
       .select('lesson_id, completed')
       .eq('user_id', user.id)
       .eq('completed', true),
+    supabase
+      .from('tree_progress')
+      .select('total_correct')
+      .eq('user_id', user.id)
+      .single(),
+    supabase
+      .from('achievements')
+      .select('badge_id, earned_at')
+      .eq('user_id', user.id),
   ])
 
   const name =
@@ -30,6 +42,10 @@ export default async function DashboardPage() {
   const completedIds = (progressResult.data ?? []).map((row) => row.lesson_id)
   const completedCount = completedIds.length
   const totalCount = LESSONS.length
+  const totalCorrect = treeResult.data?.total_correct ?? 0
+  const earnedMap = new Map(
+    (badgeResult.data ?? []).map((b) => [b.badge_id, b.earned_at])
+  )
 
   const nextLesson = LESSONS.find((l) => !completedIds.includes(l.id))
 
@@ -52,6 +68,35 @@ export default async function DashboardPage() {
               <p className="text-xs font-medium">全部完成！</p>
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Tree + Achievements */}
+      <div className="grid md:grid-cols-2 gap-6 mb-8">
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+          <GrowingTree totalCorrect={totalCorrect} />
+          <p className="text-center text-xs text-slate-400 mt-4">
+            累計答對{' '}
+            <span className="font-bold text-slate-600">{totalCorrect}</span> 題
+          </p>
+        </div>
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+          <h2 className="font-bold text-slate-800 mb-4">
+            成就勳章{' '}
+            <span className="text-sm text-slate-400 font-normal">
+              {earnedMap.size} / {ACHIEVEMENTS.length}
+            </span>
+          </h2>
+          <div className="grid grid-cols-2 gap-3">
+            {ACHIEVEMENTS.map((achievement) => (
+              <AchievementBadge
+                key={achievement.id}
+                achievement={achievement}
+                earned={earnedMap.has(achievement.id)}
+                earnedAt={earnedMap.get(achievement.id)}
+              />
+            ))}
+          </div>
         </div>
       </div>
 

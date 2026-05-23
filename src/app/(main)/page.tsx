@@ -17,8 +17,7 @@ export default function HomePage() {
           <span className="text-indigo-600"> 珠心算</span>
         </h1>
         <p className="text-lg text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed">
-          跟著 Miss Abacus 的專業課程，從認識算盤到心算能力，
-          循序漸進，輕鬆學會珠心算！
+          從認識算盤到心算能力，循序漸進，輕鬆學會珠心算！
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link href="/courses">
@@ -48,8 +47,8 @@ export default function HomePage() {
             },
             {
               icon: <Target className="w-6 h-6 text-purple-500" />,
-              title: '專業師資教學',
-              desc: 'Miss Abacus 多年珠心算教學經驗',
+              title: '系統化課程',
+              desc: '從基礎到進階，按部就班循序學習',
             },
             {
               icon: <TrendingUp className="w-6 h-6 text-emerald-500" />,

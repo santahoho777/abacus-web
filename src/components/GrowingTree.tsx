@@ -8,6 +8,8 @@ import {
 
 interface GrowingTreeProps {
   totalCorrect: number
+  compact?: boolean
+  isWatering?: boolean
 }
 
 const TREE_VISUALS: Record<
@@ -88,11 +90,50 @@ const TREE_VISUALS: Record<
   },
 }
 
-export default function GrowingTree({ totalCorrect }: GrowingTreeProps) {
+export default function GrowingTree({
+  totalCorrect,
+  compact = false,
+  isWatering = false,
+}: GrowingTreeProps) {
   const stageInfo = getTreeStage(totalCorrect)
   const nextStage = getNextStage(totalCorrect)
   const progress = getProgressToNextStage(totalCorrect)
   const visual = TREE_VISUALS[stageInfo.stage]
+
+  if (compact) {
+    return (
+      <div
+        className={`relative flex items-center gap-3 bg-gradient-to-r ${visual.bg} border border-slate-200 rounded-2xl px-4 py-3 overflow-hidden`}
+      >
+        <span className={`text-3xl ${isWatering ? 'animate-bounce' : ''}`}>
+          {stageInfo.emoji}
+        </span>
+        <div className="flex-1 min-w-0">
+          <p className="text-xs text-slate-400">我的樹</p>
+          <p className="text-sm font-bold text-slate-700">{stageInfo.label}</p>
+          {nextStage && (
+            <div className="flex items-center gap-2 mt-1">
+              <div className="h-1.5 flex-1 bg-slate-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-green-400 to-emerald-500 rounded-full transition-all duration-700"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <span className="text-xs text-slate-400 flex-shrink-0">
+                {nextStage.emoji}
+              </span>
+            </div>
+          )}
+        </div>
+        {isWatering && (
+          <div className="flex flex-col items-center gap-0.5 animate-bounce text-blue-400">
+            <span className="text-base">💧</span>
+            <span className="text-xs">💧</span>
+          </div>
+        )}
+      </div>
+    )
+  }
 
   return (
     <div className="text-center">
