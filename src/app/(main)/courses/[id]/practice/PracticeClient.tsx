@@ -47,23 +47,25 @@ export default function PracticeClient({ lessonId }: { lessonId: number }) {
     setIsSubmitting(true)
     if (!isCorrect) setShowHint(true)
 
-    const result = await submitAnswer(lessonId, currentQ.id, isCorrect)
-    setIsSubmitting(false)
-
-    if (isCorrect) {
-      setScore((s) => s + 1)
-      water(result.totalCorrect)
-      if (result.newBadgeIds.length > 0) {
-        const def = ACHIEVEMENTS.find((a) => a.id === result.newBadgeIds[0])
-        if (def) setToastAchievement(def)
+    try {
+      const result = await submitAnswer(lessonId, currentQ.id, isCorrect)
+      if (isCorrect) {
+        setScore((s) => s + 1)
+        water(result.totalCorrect)
+        if (result.newBadgeIds.length > 0) {
+          const def = ACHIEVEMENTS.find((a) => a.id === result.newBadgeIds[0])
+          if (def) setToastAchievement(def)
+        }
+        setTimeout(advanceQuestion, 1500)
+      } else {
+        setShowHint(true)
+        setTimeout(() => {
+          setFeedback(null)
+          setInputValue('')
+        }, 800)
       }
-      setTimeout(advanceQuestion, 1500)
-    } else {
-      setShowHint(true)
-      setTimeout(() => {
-        setFeedback(null)
-        setInputValue('')
-      }, 800)
+    } finally {
+      setIsSubmitting(false)
     }
   }, [currentQ, inputValue, isSubmitting, feedback, lessonId, advanceQuestion, water])
 
@@ -160,9 +162,30 @@ export default function PracticeClient({ lessonId }: { lessonId: number }) {
           </div>
         )}
 
-        <p className="text-3xl font-bold text-slate-800 mb-6">
-          {currentQ.question}
-        </p>
+        {/* Column sum display */}
+        <div className="flex justify-center mb-6">
+          <div className="inline-flex flex-col items-end gap-0.5">
+            {currentQ.numbers.map((n, i) => (
+              <div key={i} className="flex items-baseline gap-2">
+                <span
+                  className={`text-lg font-bold w-5 text-right ${
+                    i === 0
+                      ? 'invisible'
+                      : n < 0
+                      ? 'text-red-500'
+                      : 'text-slate-400'
+                  }`}
+                >
+                  {n < 0 ? '−' : '+'}
+                </span>
+                <span className="text-3xl font-bold font-mono text-slate-800 w-12 text-right">
+                  {Math.abs(n)}
+                </span>
+              </div>
+            ))}
+            <div className="border-t-2 border-slate-400 w-full mt-1" />
+          </div>
+        </div>
 
         {/* Answer display */}
         <div className="inline-flex items-center justify-center bg-slate-50 border-2 border-slate-200 rounded-xl px-8 py-3 min-w-36 mb-4">

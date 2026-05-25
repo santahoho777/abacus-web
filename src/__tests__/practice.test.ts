@@ -14,7 +14,8 @@ describe('practice questions', () => {
       expect(q.id).toBeTruthy()
       expect(q.lessonId).toBeGreaterThanOrEqual(1)
       expect(q.lessonId).toBeLessThanOrEqual(9)
-      expect(q.question).toBeTruthy()
+      expect(Array.isArray(q.numbers)).toBe(true)
+      expect(q.numbers.length).toBeGreaterThanOrEqual(3)
       expect(typeof q.answer).toBe('number')
     })
   })
@@ -23,5 +24,12 @@ describe('practice questions', () => {
     const ids = PRACTICE_QUESTIONS.map((q) => q.id)
     const unique = new Set(ids)
     expect(unique.size).toBe(ids.length)
+  })
+
+  it('answer matches sum of numbers', () => {
+    PRACTICE_QUESTIONS.forEach((q) => {
+      const sum = q.numbers.reduce((acc, n) => acc + n, 0)
+      expect(sum).toBe(q.answer)
+    })
   })
 })

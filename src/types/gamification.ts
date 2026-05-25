@@ -1,7 +1,7 @@
 export interface PracticeQuestion {
   id: string
   lessonId: number
-  question: string
+  numbers: number[]
   answer: number
   hint?: string
 }
