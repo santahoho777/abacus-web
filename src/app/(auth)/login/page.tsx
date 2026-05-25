@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { login } from '../actions'
 import { Button } from '@/components/ui/button'
 import { BookOpen } from 'lucide-react'
@@ -33,7 +32,7 @@ export default function LoginPage({
               htmlFor="email"
               className="block text-sm font-medium text-slate-700 mb-1"
             >
-              電子郵件
+              帳號
             </label>
             <input
               id="email"
@@ -42,7 +41,7 @@ export default function LoginPage({
               required
               autoComplete="email"
               className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-              placeholder="your@email.com"
+              placeholder="s01@abacus.app"
             />
           </div>
           <div>
@@ -71,13 +70,7 @@ export default function LoginPage({
         </form>
 
         <p className="text-center text-sm text-slate-500 mt-6">
-          還沒有帳號？{' '}
-          <Link
-            href="/register"
-            className="text-indigo-600 hover:text-indigo-700 font-medium"
-          >
-            免費註冊
-          </Link>
+          帳號由老師提供，如有問題請聯絡老師
         </p>
       </div>
     </div>
